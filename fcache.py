@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import os
 import sql
 import sys
@@ -41,6 +42,7 @@ def start_cache():
     sdir = '/Users/kylin/Downloads'
     conn = sql.db_connect(cache_db)
     cnt =0;
+    print "start file cache"
     for dname,dnames,files in os.walk(sdir):
         for f in files:
             full_path = dname + "/"+ f
@@ -57,7 +59,20 @@ def start_cache():
                 sys.stdout.write('cached file count :' + str(cnt) + ' dup skip' + '\r')
                 sys.stdout.flush()
     sql.db_close(conn)
+def query_ext(dbfile,ext):
+    #execsql='''select fullpath,filename from file_list where filename like "%.%s"
+    #         group by filename having(COUNT(*)>15);'''
+    
+    execsql='select fullpath,filename from file_list where filename like "%.%s"'
+    conn = sql.db_connect(dbfile)
+    r=sql.db_sql(conn,execsql)
+    data = r.fetchall()
+    #print data
+    sql.db_close(conn)
+    for f in data:
+        print f[0].encode('utf-8'),f[1].encode('utf-8')
 
-chk_db(cache_db)
-start_cache()
+#chk_db(cache_db)
+#start_cache()
 #print is_dup(cache_db,'test','test')
+query_ext(cache_db,'jpg')
