@@ -13,11 +13,9 @@ def chk_table(table):
     return len(data)
 
 def is_dup(fullpath,filename):
-    fullpath = fullpath.replace("'","''")
-    filename = filename.replace("'","''")
-    execsql = "select * from file_list where fullpath='%s' and filename = '%s';" %(fullpath,filename)
+    execsql = "select * from file_list where fullpath=? and filename = ?;"
     #print execsql
-    r=sql.db_sql(conn,execsql)
+    r=sql.db_sql(conn,execsql,fullpath.decode('utf-8'),filename.decode('utf-8'))
     data = r.fetchall()
     #print data
     return len(data) > 0
@@ -43,10 +41,10 @@ def start_cache():
             full_path = dname + "/"+ f
             if is_dup(full_path,f) == False:
                 #print  full_path
-                execsql = 'insert into file_list (fullpath,filename) values ("%s","%s")' % (full_path,f)
+                execsql = 'insert into file_list (fullpath,filename) values (?,?)'
                 #print execsql
             
-                r=sql.db_sql(conn,execsql)
+                r=sql.db_sql(conn,execsql,full_path.decode('utf-8'),f.decode('utf-8'))
                 cnt+=1
                 sys.stdout.write('cached file count :' + str(cnt) + 'file name :' + f + '\r' )
                 sys.stdout.flush()
