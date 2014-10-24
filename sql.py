@@ -8,6 +8,13 @@ def db_sql(conn,sql):
     #c.execute("create table test (a text ,b text)")
     conn.commit()
     return row
+def db_sql(conn,sql,*arg):
+    c = conn.cursor()
+    row = c.execute(sql,arg)
+    #c.execute("create table test (a text ,b text)")
+    conn.commit()
+    return row
+
 def db_close(conn):
     conn.close()
 '''
