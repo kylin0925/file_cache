@@ -36,9 +36,12 @@ def start_cache():
     #conn = sql.db_connect(cache_db)
     cnt =0;
     print "start file cache"
+    msg_len = 0
     for dname,dnames,files in os.walk(sdir):
         for f in files:
             full_path = dname + "/"+ f
+            msg = ""
+
             if is_dup(full_path,f) == False:
                 #print  full_path
                 execsql = 'insert into file_list (fullpath,filename) values (?,?)'
@@ -46,11 +49,16 @@ def start_cache():
             
                 r=sql.db_sql(conn,execsql,full_path.decode('utf-8'),f.decode('utf-8'))
                 cnt+=1
-                sys.stdout.write('cached file count :' + str(cnt) + 'file name :' + f + '\r' )
-                sys.stdout.flush()
+                msg = 'cached file count :' + str(cnt) + ' file name :' + f + '\r'
             else:
-                sys.stdout.write('cached file count :' + str(cnt) + ' dup skip' + '\r')
-                sys.stdout.flush()
+                msg = 'cached file count :' + str(cnt) + ' dup skip' + '\r'
+            s = ' ' * (msg_len - 1)  + '\r'
+            sys.stdout.write(s)
+            sys.stdout.flush()
+
+            msg_len = len(msg)
+            sys.stdout.write(msg)
+            sys.stdout.flush()
     print ""
 def query_ext(ext):
     #execsql='''select fullpath,filename from file_list where filename like "%.%s"
